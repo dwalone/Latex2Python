@@ -30,7 +30,8 @@ ops =  {
         r'\\sinh' : 'np.sinh',
         r'\\cosh' : 'np.cosh',
         r'\\tanh' : 'np.tanh',
-        r'\\sqrt' : 'np.sqrt'
+        r'\\sqrt' : 'np.sqrt',
+        r'\\pi' : 'np.pi'
         }
 
 funs = [r'\\frac', r'\\log_']
@@ -98,7 +99,7 @@ def repFunctions(f, s):
 def insMultiply(s):
     s_temp = s
     for v in ops.values():
-        s_temp = re.sub(v, '('*len(v), s_temp)
+        s_temp = re.sub(v, ('('*(len(v)-1))+')', s_temp)
     ops_list = ['*', '/', '(', '+', '-']
     idx_list = []
     
