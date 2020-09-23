@@ -148,7 +148,7 @@ def main():
     
     while True:
         
-        s = input("Enter Latex expression: ")
+        s = input("Paste your expression: ")
     
         for k, v in symbols.items():
             s = re.sub(k, v, s)
