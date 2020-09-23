@@ -1,7 +1,7 @@
 import re
 import argparse
 
-subd = {
+symbols = {
         r'\\left' : '',
         r'\\right' : '',
         r'\\cdot' : '*',
@@ -10,7 +10,11 @@ subd = {
         ' ' : '',
         '{' : '(',
         '}' : ')',
-        '\^' : '**',        
+        '\^' : '**'
+        
+        }
+
+ops =  {
         r'\\log' : 'np.log10',
         r'\\ln' : 'np.log',
         r'\\sin' : 'np.sin',
@@ -29,6 +33,13 @@ subd = {
         }
 
 funs = [r'\\frac', r'\\log_']
+
+def isint(s):
+    try: 
+        int(s)
+        return True
+    except ValueError:
+        return False
 
 
 def getCloseBr(s):
@@ -80,30 +91,52 @@ def repFunctions(f, s):
             
     return s
 
-
+def insMultiply(s):
+    s_temp = s
+    for v in ops.values():
+        s_temp = re.sub(v, '('*len(v), s_temp)
+    ops_list = ['**', '*', '/', '(', '+', '-', '.']
+    idx_list = []
+    
+    for i, char in enumerate(s_temp):
+        if char == '(':
+            if s_temp[i-1] not in ops_list and i != 0:
+                idx_list.append(i)
+                
+        elif isint(char) == False and char not in ops_list and char != ')' and i != 0:
+            if isint(s_temp[i-1]) not in ops_list:
+                idx_list.append(i)
+                                     
+    idx_list.sort()
+    for c, i in enumerate(idx_list):
+        s = s[:i+c] + '*' + s[i+c:]
+    return s
+            
 
 
 def main():
     
+    '''
     parser = argparse.ArgumentParser(description='Convert a Latex expression to a computable Python expression')
     parser.add_argument("e")
     args = parser.parse_args()
     s = args.e
+    '''
+    s = r'\frac{13}{500}\ln \left(-2000x-6999\right)'
 
-    for k, v in subd.items():
+    for k, v in symbols.items():
+        s = re.sub(k, v, s)
+        
+    for k, v in ops.items():
         s = re.sub(k, v, s)
     
     for f in funs:
         s = repFunctions(f, s)
+    
+    print(s)
+    s = insMultiply(s)
         
     print(s)
 
 if __name__ == "__main__":
     main()
-
-    
-    
-                                         
-
-    
-
