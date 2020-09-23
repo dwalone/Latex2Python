@@ -31,10 +31,13 @@ ops =  {
         r'\\cosh' : 'np.cosh',
         r'\\tanh' : 'np.tanh',
         r'\\sqrt' : 'np.sqrt',
-        r'\\pi' : 'np.pi'
         }
 
 funs = [r'\\frac', r'\\log_']
+
+consts = {
+          r'\\pi' : 'np.pi'
+          }
 
 def isint(s):
     if s == '.':
@@ -96,13 +99,16 @@ def repFunctions(f, s):
             
     return s
 
+    
+
 def insMultiply(s):
     s_temp = s
     for v in ops.values():
-        s_temp = re.sub(v, ('('*(len(v)-1))+')', s_temp)
+        s_temp = re.sub(v, '('*len(v), s_temp)
+    for v in consts.values():
+        s_temp = re.sub(v, '('*(len(v)-1)+')', s_temp)
     ops_list = ['*', '/', '(', '+', '-']
     idx_list = []
-    
     for i, char in enumerate(s_temp):
         if char == '(':
             if s_temp[i-1] not in ops_list and i != 0:
@@ -112,10 +118,11 @@ def insMultiply(s):
             if isint(char) == False:
                 if s_temp[i-1] not in ops_list:
                     idx_list.append(i)
+                    
             elif isint(char) == True:
                 if s_temp[i-1] not in ops_list and isint(s_temp[i-1]) == False:
                     idx_list.append(i)
-    
+                                  
     idx_list = list(set(idx_list))                                 
     idx_list.sort()
     for c, i in enumerate(idx_list):
@@ -126,15 +133,16 @@ def remBrackets(s):
     idx_list = []
     for i, char in enumerate(s):
         if char == '(':
-            pos = getCloseBr(s[i:]) + i
-            if len([1 for o in ['+', '-', '/', '*', ')', '('] if o in s[i+1:pos]]) == 0:
-              idx_list.append(i)
-              idx_list.append(pos)
-            if s[i+1] == '(':
-                pos2 = getCloseBr(s[i+1:]) + i+1
-                if pos2 == pos - 1:
-                    idx_list.append(i+1)
-                    idx_list.append(pos2)
+            if s[i-1] in ['+', '-', '/', '*', ')', '(']:
+                pos = getCloseBr(s[i:]) + i
+                if len([1 for o in ['+', '-', '/', '*', ')', '('] if o in s[i+1:pos]]) == 0:
+                  idx_list.append(i)
+                  idx_list.append(pos)
+                if s[i+1] == '(':
+                    pos2 = getCloseBr(s[i+1:]) + i+1
+                    if pos2 == pos - 1:
+                        idx_list.append(i+1)
+                        idx_list.append(pos2)
                 
   
     idx_list = list(set(idx_list))
@@ -155,15 +163,18 @@ def main():
             
         for k, v in ops.items():
             s = re.sub(k, v, s)
-        
+            
+        for k, v in consts.items():
+            s = re.sub(k, v, s)
+            
         for f in funs:
-            s = repFunctions(f, s)
-        
+            s = repFunctions(f, s)   
+            
         s = insMultiply(s)
         
         s = remBrackets(s)
             
-        print(s)
+        print('result: ' + s)
 
 if __name__ == "__main__":
     main()
