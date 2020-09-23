@@ -6,7 +6,7 @@ Frustrated from typing out complex mathematical expressions with tons of bracket
 
 Type out your maths quickly in SymboLab, Desmos etc.
 
-![Example](desmos_example.png)
+![Example](examples/desmos_example.png)
 
 Highlight and Copy
 
@@ -14,7 +14,7 @@ Run `latex2python.py` using `python latex2python.py` in the terminal, or just no
 
 Paste when prompted and hit Enter
 
-![Example](result_example.png)
+![Example](examples/result_example.png)
 
 Done!
 
