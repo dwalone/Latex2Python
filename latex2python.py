@@ -1,6 +1,7 @@
 import re
 import argparse
 
+
 symbols = {
         r'\\left' : '',
         r'\\right' : '',
@@ -29,17 +30,20 @@ ops =  {
         r'\\sinh' : 'np.sinh',
         r'\\cosh' : 'np.cosh',
         r'\\tanh' : 'np.tanh',
-        r'\\sqrt' : 'np.sqrt'   
+        r'\\sqrt' : 'np.sqrt'
         }
 
 funs = [r'\\frac', r'\\log_']
 
 def isint(s):
-    try: 
-        int(s)
-        return True
-    except ValueError:
-        return False
+    if s == '.':
+        return True    
+    else:
+        try: 
+            int(s)
+            return True
+        except ValueError:
+            return False
 
 
 def getCloseBr(s):
@@ -95,7 +99,7 @@ def insMultiply(s):
     s_temp = s
     for v in ops.values():
         s_temp = re.sub(v, '('*len(v), s_temp)
-    ops_list = ['**', '*', '/', '(', '+', '-', '.']
+    ops_list = ['*', '/', '(', '+', '-']
     idx_list = []
     
     for i, char in enumerate(s_temp):
@@ -103,40 +107,62 @@ def insMultiply(s):
             if s_temp[i-1] not in ops_list and i != 0:
                 idx_list.append(i)
                 
-        elif isint(char) == False and char not in ops_list and char != ')' and i != 0:
-            if isint(s_temp[i-1]) not in ops_list:
-                idx_list.append(i)
-                                     
+        elif char not in ops_list and char != ')' and i != 0:           
+            if isint(char) == False:
+                if s_temp[i-1] not in ops_list:
+                    idx_list.append(i)
+            elif isint(char) == True:
+                if s_temp[i-1] not in ops_list and isint(s_temp[i-1]) == False:
+                    idx_list.append(i)
+    
+    idx_list = list(set(idx_list))                                 
     idx_list.sort()
     for c, i in enumerate(idx_list):
         s = s[:i+c] + '*' + s[i+c:]
     return s
+
+def remBrackets(s):
+    idx_list = []
+    for i, char in enumerate(s):
+        if char == '(':
+            pos = getCloseBr(s[i:]) + i
+            if len([1 for o in ['+', '-', '/', '*', ')', '('] if o in s[i+1:pos]]) == 0:
+              idx_list.append(i)
+              idx_list.append(pos)
+            if s[i+1] == '(':
+                pos2 = getCloseBr(s[i+1:]) + i+1
+                if pos2 == pos - 1:
+                    idx_list.append(i+1)
+                    idx_list.append(pos2)
+                
+  
+    idx_list = list(set(idx_list))
+    idx_list.sort()
+    for c, i in enumerate(idx_list):
+        s = s = s[:i-c] + '' + s[i-c + 1:]
+    return s            
+        
             
-
-
 def main():
     
-    '''
-    parser = argparse.ArgumentParser(description='Convert a Latex expression to a computable Python expression')
-    parser.add_argument("e")
-    args = parser.parse_args()
-    s = args.e
-    '''
-    s = r'\frac{13}{500}\ln \left(-2000x-6999\right)'
-
-    for k, v in symbols.items():
-        s = re.sub(k, v, s)
+    while True:
         
-    for k, v in ops.items():
-        s = re.sub(k, v, s)
+        s = input("Enter Latex expression: ")
     
-    for f in funs:
-        s = repFunctions(f, s)
-    
-    print(s)
-    s = insMultiply(s)
+        for k, v in symbols.items():
+            s = re.sub(k, v, s)
+            
+        for k, v in ops.items():
+            s = re.sub(k, v, s)
         
-    print(s)
+        for f in funs:
+            s = repFunctions(f, s)
+        
+        s = insMultiply(s)
+        
+        s = remBrackets(s)
+            
+        print(s)
 
 if __name__ == "__main__":
     main()
