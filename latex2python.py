@@ -25,7 +25,7 @@ ops =  {
         r'\\sec' : 'np.sec',
         r'\\cot' : 'np.cot',
         r'\\arcsin' : 'np.arcsin',
-        r'\\arccos' : 'np.arcos',
+        r'\\arccos' : 'np.arccos',
         r'\\arctan' : 'np.arctan',
         r'\\sinh' : 'np.sinh',
         r'\\cosh' : 'np.cosh',
