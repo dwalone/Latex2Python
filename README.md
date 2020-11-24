@@ -18,6 +18,14 @@ Paste when prompted and hit Enter
 
 Done!
 
+## Update - Support for variables
+
+![Example](examples/example2.png)
+
+yields
+
+![Example](examples/example2result.png)
+
 ## Requirements
 
 `python 3.`
