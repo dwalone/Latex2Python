@@ -3,6 +3,9 @@ import argparse
 
 
 symbols = {
+        r'\\ ' : '',
+        r'\\left\s*\|' : r'\\abs(',
+        r'\\right\s*\|' : ')',
         r'\\left' : '',
         r'\\right' : '',
         r'\\cdot' : '*',
@@ -12,7 +15,6 @@ symbols = {
         '{' : '(',
         '}' : ')',
         '\^' : '**'
-        
         }
 
 ops =  {
@@ -28,7 +30,8 @@ ops =  {
         r'\\cosh' : 'np.cosh',
         r'\\tanh' : 'np.tanh',
         r'\\sqrt' : 'np.sqrt',
-        r'\\exp' : 'np.exp'
+        r'\\exp' : 'np.exp',
+        r'\\abs' : 'np.abs'
         }
 
 funs = [r'\\frac', r'\\log_']
@@ -94,7 +97,7 @@ def repFunctions(f, s):
                 pos = getCloseBr(s_strip[len(base):]) + len(base)
                 arg = s_strip[len(base):pos+1]
             s = s[:i] + '(np.log('+arg+')/np.log('+base+'))' + s_strip[pos+1:]
-            
+
     return s
 
 
